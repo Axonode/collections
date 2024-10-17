@@ -1,0 +1,8 @@
+services:
+  php:
+    container_name: axonode-collections-php
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www
