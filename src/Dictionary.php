@@ -54,7 +54,7 @@ final class Dictionary implements IDictionary
 
     /**
      * @inheritdoc
-     * @param array-key|object $offset
+     * @param TKey $offset
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -124,12 +124,16 @@ final class Dictionary implements IDictionary
         return count($this->values);
     }
 
+    /**
+     * @param TKey $publicKey
+     */
     private function toInternalKey(mixed $publicKey): string
     {
         return match (gettype($publicKey)) {
             'string' => $publicKey,
             'integer' => (string) $publicKey,
             'object' => $publicKey instanceof Hashable ? $publicKey->getHash() : spl_object_hash($publicKey),
+            // @phpstan-ignore match.unreachable
             default => throw new \InvalidArgumentException('Unsupported offset type'),
         };
     }
