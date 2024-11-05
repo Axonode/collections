@@ -14,11 +14,11 @@ namespace Axonode\Collections;
 interface ISet extends ICollection
 {
     /**
-     * Determines if the given value is present in the set.
+     * Returns a primitive representation of the set.
      *
-     * @param T $value
+     * @return T[]
      */
-    public function contains(mixed $value): bool;
+    public function toArray(): array;
 
     /**
      * Adds a new item to the set.
@@ -35,4 +35,29 @@ interface ISet extends ICollection
      * @throws \OutOfBoundsException when the value is not present in the set.
      */
     public function remove(mixed $value): void;
+
+    /**
+     * Pushes one or more values onto the end of the set.
+     *
+     * @param T ...$values
+     */
+    public function push(mixed ...$values): void;
+
+    /**
+     * Sorts the items of the collection in the given order.
+     *
+     * @param SortDirection $direction
+     *
+     * @return $this
+     */
+    public function sort(SortDirection $direction = SortDirection::ASCENDING): self;
+
+    /**
+     * Sorts the items of the collection by the given selector.
+     *
+     * @param callable(T, T): int<-1, 1> $selector
+     *
+     * @return $this
+     */
+    public function sortBy(callable $selector): self;
 }

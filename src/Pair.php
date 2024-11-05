@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Axonode\Collections;
 
+use Axonode\Collections\Object\GeneratesObjectHash;
+
 /**
  * Represents a key-value pair.
  *
- * @template TKey of array-key|object
+ * @template TKey
  * @template TValue
  *
  * @implements IPair<TKey, TValue>
  */
 final readonly class Pair implements IPair
 {
+    use GeneratesObjectHash;
+
     /**
      * @param TKey $key
      * @param TValue $value
