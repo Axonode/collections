@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Axonode\Collections;
+namespace Axonode\Collections\Contracts;
 
 /**
  * Represents a collection of items.
@@ -195,4 +195,14 @@ interface ICollection extends \ArrayAccess, \Iterator, \Countable
      * @throws \UnderflowException when the collection is empty
      */
     public function shift(): mixed;
+
+    /**
+     * Checks if the collection is empty.
+     */
+    public function isEmpty(): bool;
+
+    /**
+     * Checks if the collection is not empty.
+     */
+    public function isNotEmpty(): bool;
 }

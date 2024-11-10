@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Axonode\Collections;
 
+use Axonode\Collections\Contracts\IPair;
 use Axonode\Collections\Object\GeneratesObjectHash;
 
 /**

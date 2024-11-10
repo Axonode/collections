@@ -467,7 +467,7 @@ it('throws exception when trying to invoke method which could not be invoked on 
     ['random', [1]],
     ['secureRandom', [1]],
     ['shift', []],
-])->throws(UnderflowException::class, 'The dictionary is empty.');
+])->throws(UnderflowException::class, 'The collection is empty.');
 
 it('removes and returns the last item of the dictionary', function () {
     $dictionary = new Dictionary(
@@ -585,3 +585,10 @@ it('sorts the dictionary by the given selector', function () {
 
     expect($dictionary)->toEqual($expectedDictionary);
 });
+
+it('checks if the collection is not empty', function (Dictionary $dictionary, bool $expectedResult) {
+    expect($dictionary->isNotEmpty())->toBe($expectedResult);
+})->with([
+    [new Dictionary(), false],
+    [new Dictionary(new Pair('a', 1)), true],
+]);

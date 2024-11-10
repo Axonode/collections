@@ -295,7 +295,7 @@ it('returns a new list without the values did not pass the matching criteria', f
 it('throws exception when trying to pop from empty list', function () {
     $list = new ArrayList();
     $list->pop();
-})->throws(UnderflowException::class, 'The list is empty.');
+})->throws(UnderflowException::class, 'The collection is empty.');
 
 it('pops the last element of the list', function () {
     $list = new ArrayList([1, 2, 3, 4, 5]);
@@ -317,7 +317,7 @@ it('pushes the given values to the end of the list', function () {
 it('throws exception when trying to retrieve random element from empty list', function () {
     $list = new ArrayList();
     $list->random();
-})->throws(UnderflowException::class, 'The list is empty.');
+})->throws(UnderflowException::class, 'The collection is empty.');
 
 it('throws exception when trying to retrieve more random elements from the list than it contains', function (string $method) {
     $list = new ArrayList([1, 2, 3]);
@@ -375,7 +375,7 @@ it('returns a list of the offsets of the occurrences of the searched element', f
 it('throws exception when trying to shift from empty list', function () {
     $list = new ArrayList();
     $list->shift();
-})->throws(UnderflowException::class, 'The list is empty.');
+})->throws(UnderflowException::class, 'The collection is empty.');
 
 it('removes the first element of the list and return it', function () {
     $list = new ArrayList([1, 2, 3, 4, 5]);
@@ -399,4 +399,11 @@ it('sorts the list by the given selector', function () {
 
     expect($list->sortBy($selector))->toEqual($expectedList);
 });
+
+it('checks if the collection is not empty', function (ArrayList $list, bool $expectedResult) {
+    expect($list->isNotEmpty())->toBe($expectedResult);
+})->with([
+    [new ArrayList(), false],
+    [new ArrayList([1, 2, 3]), true],
+]);
 

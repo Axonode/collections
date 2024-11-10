@@ -4,10 +4,22 @@ declare(strict_types=1);
 
 namespace Axonode\Collections;
 
+use Axonode\Collections\Contracts\ICollection;
+use Axonode\Collections\Contracts\IDictionary;
+use Axonode\Collections\Contracts\IList;
+use Axonode\Collections\Contracts\IPair;
+use Axonode\Collections\Contracts\ISet;
 use Axonode\Collections\Object\GeneratesObjectHash;
 use Axonode\Collections\Object\Hashable;
+use Axonode\Collections\Traits\CollectionShared;
+use Axonode\Collections\Traits\CountsElements;
+use Axonode\Collections\Traits\HashKeys;
+use Axonode\Collections\Traits\Enumerator;
+use OutOfBoundsException;
+use OutOfRangeException;
 use Random\Engine\Secure;
 use Random\Randomizer;
+use ValueError;
 
 /**
  * Represents a collection of key-value pairs.
@@ -20,6 +32,10 @@ use Random\Randomizer;
 final class Dictionary implements IDictionary, Hashable
 {
     use GeneratesObjectHash;
+    use CollectionShared;
+    use HashKeys;
+    use Enumerator;
+    use CountsElements;
 
     /**
      * @var array<string, int>
@@ -46,7 +62,7 @@ final class Dictionary implements IDictionary, Hashable
     public static function combine(ISet $keys, IList $values): IDictionary
     {
         if ($keys->count() !== $values->count()) {
-            throw new \ValueError('The number of keys and values do not match.');
+            throw new ValueError('The number of keys and values do not match.');
         }
 
         return new self(
@@ -68,11 +84,6 @@ final class Dictionary implements IDictionary, Hashable
         return new ArrayList(array_map(fn (IPair $pair) => $pair->value(), $this->values));
     }
 
-    public function toList(): IList
-    {
-        return $this->values();
-    }
-
     public function toSet(): ISet
     {
         return $this->toList()->toSet();
@@ -83,13 +94,6 @@ final class Dictionary implements IDictionary, Hashable
         return clone $this;
     }
 
-    public function apply(callable $selector): void
-    {
-        foreach ($this->values as $offset => $pair) {
-            $this->values[$offset] = $pair->withValue($selector($pair->value(), $pair->key()));
-        }
-    }
-
     public function offsetExists(mixed $offset): bool
     {
         return array_key_exists($this->toInternalKey($offset), $this->keys);
@@ -98,7 +102,7 @@ final class Dictionary implements IDictionary, Hashable
     public function offsetGet(mixed $offset): mixed
     {
         if (!$this->offsetExists($offset)) {
-            throw new \OutOfBoundsException('The specified key does not exist.');
+            throw new OutOfBoundsException('The specified key does not exist.');
         }
 
         return $this->values[$this->keys[$this->toInternalKey($offset)]]->value();
@@ -127,7 +131,7 @@ final class Dictionary implements IDictionary, Hashable
     public function offsetUnset(mixed $offset): void
     {
         if (!$this->offsetExists($offset)) {
-            throw new \OutOfBoundsException('The specified key does not exist.');
+            throw new OutOfBoundsException('The specified key does not exist.');
         }
 
         $internalKey = $this->toInternalKey($offset);
@@ -147,34 +151,15 @@ final class Dictionary implements IDictionary, Hashable
         }
     }
 
-    public function current(): mixed
+    public function apply(callable $selector): void
     {
-        return $this->values[$this->pointer]->value();
-    }
+        $pointer = $this->pointer;
 
-    public function next(): void
-    {
-        $this->pointer++;
-    }
+        foreach ($this->values as $offset => $pair) {
+            $this->values[$offset] = $pair->withValue($selector($pair->value(), $pair->key()));
+        }
 
-    public function key(): mixed
-    {
-        return $this->values[$this->pointer]->key();
-    }
-
-    public function valid(): bool
-    {
-        return isset($this->values[$this->pointer]);
-    }
-
-    public function rewind(): void
-    {
-        $this->pointer = 0;
-    }
-
-    public function count(): int
-    {
-        return count($this->values);
+        $this->pointer = $pointer;
     }
 
     public function chunk(int $length): IList
@@ -264,19 +249,6 @@ final class Dictionary implements IDictionary, Hashable
         ));
     }
 
-    public function merge(ICollection ...$collections): IDictionary
-    {
-        $merged = $this->toDictionary();
-
-        foreach ($collections as $collection) {
-            foreach ($collection as $key => $value) {
-                $merged[$key] = $value;
-            }
-        }
-
-        return $merged;
-    }
-
     public function pop(): mixed
     {
         $this->assertIsNotEmpty();
@@ -294,7 +266,7 @@ final class Dictionary implements IDictionary, Hashable
         $this->assertIsNotEmpty();
 
         if ($count > $this->count()) {
-            throw new \OutOfRangeException('The count must be less than or equal to the number of elements in the dictionary.');
+            throw new OutOfRangeException('The count must be less than or equal to the number of elements in the dictionary.');
         }
 
         $keys = array_rand($this->values, $count);
@@ -310,7 +282,7 @@ final class Dictionary implements IDictionary, Hashable
         $this->assertIsNotEmpty();
 
         if ($count > $this->count()) {
-            throw new \OutOfRangeException('The count must be less than or equal to the number of elements in the dictionary.');
+            throw new OutOfRangeException('The count must be less than or equal to the number of elements in the dictionary.');
         }
 
         $randomizer = new Randomizer(new Secure());
@@ -379,6 +351,7 @@ final class Dictionary implements IDictionary, Hashable
     {
         usort($this->values, $selector);
 
+        $this->keys = [];
         foreach ($this->values as $index => $pair) {
             $this->keys[$this->toInternalKey($pair->key())] = $index;
         }
@@ -386,26 +359,13 @@ final class Dictionary implements IDictionary, Hashable
         return $this;
     }
 
-    /**
-     * @param TKey $publicKey
-     */
-    private function toInternalKey(mixed $publicKey): string
+    private function valueAt(int $at): mixed
     {
-        return match (gettype($publicKey)) {
-            'string' => $publicKey,
-            'integer', 'resource', 'resource (closed)', 'double' => (string) $publicKey,
-            'object' => $publicKey instanceof Hashable ? $publicKey->getHash() : spl_object_hash($publicKey),
-            'NULL' => 'type::null',
-            'array' => serialize($publicKey),
-            'boolean' => $publicKey ? 'true' : 'false',
-            default => throw new \TypeError('Invalid key type'),
-        };
+        return $this->values[$at]->value();
     }
 
-    private function assertIsNotEmpty(): void
+    private function keyAt(int $at): mixed
     {
-        if ($this->count() === 0) {
-            throw new \UnderflowException('The dictionary is empty.');
-        }
+        return $this->values[$at]->key();
     }
 }

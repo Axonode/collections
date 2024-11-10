@@ -324,7 +324,7 @@ it('throws exception when trying to invoke method on set which could not be invo
     ['random', [2]],
     ['secureRandom', [2]],
     ['shift', []],
-])->throws(UnderflowException::class, 'The set is empty.');
+])->throws(UnderflowException::class, 'The collection is empty.');
 
 it('removes and returns the last element of the set', function () {
     $set = new Set(['a', 'b', 'c']);
@@ -409,3 +409,10 @@ it('sorts the set by the given selector', function () {
 
     expect($set)->toEqual(new Set(['a', 'bb', 'ccc', 'dddd', 'eeeee']));
 });
+
+it('checks if the collection is not empty', function (Set $set, bool $expectedResult) {
+    expect($set->isNotEmpty())->toBe($expectedResult);
+})->with([
+    [new Set(), false],
+    [new Set([1, 2, 3]), true],
+]);

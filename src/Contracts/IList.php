@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Axonode\Collections;
+namespace Axonode\Collections\Contracts;
+
+use Axonode\Collections\SortDirection;
 
 /**
  * Represents a list of items.
