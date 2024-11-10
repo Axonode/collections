@@ -35,6 +35,7 @@
   "scripts": {
     "test": "vendor/bin/pest --ci --coverage --min=100",
     "cs": "vendor/bin/php-cs-fixer fix src/ --rules=@PSR12",
-    "analyse": "phpstan analyse -v"
+    "cs-check": "vendor/bin/php-cs-fixer fix src/ --rules=@PSR12 --dry-run --show-progress=dots",
+    "phpstan": "phpstan analyse -v"
   }
 }
