@@ -7,7 +7,7 @@ namespace Axonode\Collections\Contracts;
 use Axonode\Collections\SortDirection;
 
 /**
- * Represents a list of unique items.
+ * Represents a list of unique items. The items are indexed by sequential integers.
  *
  * @template T
  *

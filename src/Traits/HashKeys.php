@@ -6,6 +6,9 @@ namespace Axonode\Collections\Traits;
 
 use Axonode\Collections\Object\Hashable;
 
+/**
+ * @internal
+ */
 trait HashKeys
 {
     private function toInternalKey(mixed $publicKey): string

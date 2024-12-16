@@ -7,6 +7,9 @@ namespace Axonode\Collections\Contracts;
 use Axonode\Collections\SortDirection;
 
 /**
+ * Represents a collection of items, where each item is associated with a unique key. The keys may be any of the
+ * following types: string, integer, float, resource, object, boolean, array or null.
+ *
  * @template TKey
  * @template TValue
  *

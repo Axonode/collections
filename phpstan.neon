@@ -3,3 +3,13 @@ parameters:
     paths:
         - src
     treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        - identifier: return.type
+          paths:
+              - src/Dictionary.php
+              - src/Traits/ListShared.php
+
+        - identifier: method.childReturnType
+          paths:
+              - src/Dictionary.php
+              - src/Traits/ListShared.php

@@ -8,7 +8,7 @@ use Axonode\Collections\Contracts\IPair;
 use Axonode\Collections\Object\GeneratesObjectHash;
 
 /**
- * Represents a key-value pair.
+ * Represents an immutable key-value pair.
  *
  * @template TKey
  * @template TValue

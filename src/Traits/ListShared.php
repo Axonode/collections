@@ -163,7 +163,7 @@ trait ListShared
     public function sort(SortDirection $direction = SortDirection::ASCENDING): self
     {
         /** @var callable(T, T): int<-1, 1> $selector */
-        $selector = static fn ($a, $b) => $direction->getMultiplier() * ($a <=> $b);
+        $selector = static fn ($a, $b) => $direction->value * ($a <=> $b);
         return $this->sortBy($selector);
     }
 }

@@ -4,5 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      XDEBUG_MODE: "coverage"
     volumes:
       - .:/var/www

@@ -7,7 +7,7 @@ namespace Axonode\Collections\Contracts;
 use Axonode\Collections\Object\Hashable;
 
 /**
- * Represents a key-value pair.
+ * Represents an immutable key-value pair.
  *
  * @template TKey
  * @template TValue

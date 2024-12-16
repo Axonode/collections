@@ -4,16 +4,8 @@ declare(strict_types=1);
 
 namespace Axonode\Collections;
 
-enum SortDirection
+enum SortDirection: int
 {
-    case ASCENDING;
-    case DESCENDING;
-
-    public function getMultiplier(): int
-    {
-        return match ($this) {
-            self::ASCENDING => 1,
-            self::DESCENDING => -1,
-        };
-    }
+    case ASCENDING = 1;
+    case DESCENDING = -1;
 }

@@ -343,7 +343,7 @@ final class Dictionary implements IDictionary, Hashable
     public function sort(SortDirection $direction = SortDirection::ASCENDING): Dictionary
     {
         /** @var callable(IPair<TKey, TValue>, IPair<TKey, TValue>): int<-1, 1> $selector */
-        $selector = static fn ($a, $b) => $direction->getMultiplier() * ($a->value() <=> $b->value());
+        $selector = static fn ($a, $b) => $direction->value * ($a->value() <=> $b->value());
         return $this->sortBy($selector);
     }
 
