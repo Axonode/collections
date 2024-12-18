@@ -1,6 +1,7 @@
 {
   "name": "axonode/collections",
-  "description": "description",
+  "description": "This library provides implementations for common data structures (Pair, List, Dictionary, Set) in PHP.",
+  "version": "1.0.0",
   "minimum-stability": "stable",
   "license": "gpl-3.0",
   "authors": [
