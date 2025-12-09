@@ -185,8 +185,6 @@ interface ICollection extends \ArrayAccess, \Iterator, \Countable
      */
     public function search(mixed $value): mixed;
 
-
-
     /**
      * Removes the first element of the collection and returns it.
      *
@@ -205,4 +203,22 @@ interface ICollection extends \ArrayAccess, \Iterator, \Countable
      * Checks if the collection is not empty.
      */
     public function isNotEmpty(): bool;
+
+    /**
+     * Passes all elements in the collection to the given callback. If the callback returns true for any element, this method will return true.
+     *
+     * @param callable(TValue): bool $selector
+     *
+     * @return bool
+     */
+    public function any(callable $selector): bool;
+
+    /**
+     * Passes all elements in the collection to the given callback. If the callback returns true for all elements, this method will return true.
+     *
+     * @param callable(TValue): bool $selector
+     *
+     * @return bool
+     */
+    public function every(callable $selector): bool;
 }

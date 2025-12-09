@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Axonode\Collections\Object;
 
 /**
- * Provides a simple Hashable implementation for objects using the SPL extnesion.
+ * Provides a simple Hashable implementation for objects using the SPL extension.
  * @see Hashable
  */
 trait GeneratesObjectHash

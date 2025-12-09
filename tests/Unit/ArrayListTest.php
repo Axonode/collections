@@ -7,9 +7,18 @@ use Axonode\Collections\Dictionary;
 use Axonode\Collections\Pair;
 use Axonode\Collections\Set;
 use Axonode\Collections\SortDirection;
+use function Axonode\Collections\listOf;
 
 it('creates a list of the given items', function (array $initialItems, ArrayList $expectedList) {
     expect(new ArrayList($initialItems))->toEqual($expectedList);
+})->with([
+    [[], new ArrayList()],
+    [[1, 2, 3, 4], new ArrayList([1, 2, 3, 4])],
+    [['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4], new ArrayList([1, 2, 3, 4])]
+]);
+
+it('creates a list of the given items with the helper function', function (array $initialItems, ArrayList $expectedList) {
+    expect(listOf($initialItems))->toEqual($expectedList);
 })->with([
     [[], new ArrayList()],
     [[1, 2, 3, 4], new ArrayList([1, 2, 3, 4])],
@@ -405,5 +414,27 @@ it('checks if the collection is not empty', function (ArrayList $list, bool $exp
 })->with([
     [new ArrayList(), false],
     [new ArrayList([1, 2, 3]), true],
+]);
+
+it('checks if any element matches the given selector', function (ArrayList $list, callable $selector, bool $expectedResult) {
+    expect($list->any($selector))->toBe($expectedResult);
+})->with([
+    [new ArrayList([1, 2, 3, 4, 5]), fn ($value) => $value > 3, true],
+    [new ArrayList([1, 2, 3, 4, 5]), fn ($value) => $value > 10, false],
+    [new ArrayList([1, 2, 3, 4, 5]), fn ($value) => $value === 3, true],
+    [new ArrayList(), fn ($value) => $value > 0, false],
+    [new ArrayList(['a', 'b', 'c']), fn ($value) => $value === 'b', true],
+    [new ArrayList(['a', 'b', 'c']), fn ($value) => $value === 'z', false],
+]);
+
+it('checks if every element matches the given selector', function (ArrayList $list, callable $selector, bool $expectedResult) {
+    expect($list->every($selector))->toBe($expectedResult);
+})->with([
+    [new ArrayList([1, 2, 3, 4, 5]), fn ($value) => $value > 0, true],
+    [new ArrayList([1, 2, 3, 4, 5]), fn ($value) => $value > 3, false],
+    [new ArrayList([2, 4, 6, 8]), fn ($value) => $value % 2 === 0, true],
+    [new ArrayList([2, 4, 5, 8]), fn ($value) => $value % 2 === 0, false],
+    [new ArrayList(), fn ($value) => $value > 0, true],
+    [new ArrayList(['a', 'b', 'c']), fn ($value) => is_string($value), true],
 ]);
 

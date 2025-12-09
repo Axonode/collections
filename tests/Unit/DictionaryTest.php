@@ -8,10 +8,20 @@ use Axonode\Collections\Object\Hashable;
 use Axonode\Collections\Pair;
 use Axonode\Collections\Set;
 use Axonode\Collections\SortDirection;
+use function Axonode\Collections\dictionaryOf;
 
 it('creates empty dictionary when no items provided', function () {
     $dictionary = new Dictionary();
     expect($dictionary->count())->toBe(0);
+});
+
+it('creates a dictionary from the given array using the helper function', function () {
+    $input = ['a' => 1, 'b' => 2, 'c' => 3];
+    $dictionary = dictionaryOf($input);
+    expect($dictionary->count())->toBe(3);
+    foreach ($input as $k => $v) {
+        expect($dictionary[$k])->toBe($v);
+    }
 });
 
 it('can handle supported types as key', function (Dictionary $dictionary, mixed $key, mixed $expectedValue, ?callable $cleanUp = null) {
@@ -591,4 +601,26 @@ it('checks if the collection is not empty', function (Dictionary $dictionary, bo
 })->with([
     [new Dictionary(), false],
     [new Dictionary(new Pair('a', 1)), true],
+]);
+
+it('checks if any element matches the given selector', function (Dictionary $dictionary, callable $selector, bool $expectedResult) {
+    expect($dictionary->any($selector))->toBe($expectedResult);
+})->with([
+    [new Dictionary(new Pair('a', 1), new Pair('b', 2), new Pair('c', 3)), fn ($value) => $value > 2, true],
+    [new Dictionary(new Pair('a', 1), new Pair('b', 2), new Pair('c', 3)), fn ($value) => $value > 10, false],
+    [new Dictionary(new Pair('a', 1), new Pair('b', 2), new Pair('c', 3)), fn ($value) => $value === 2, true],
+    [new Dictionary(), fn ($value) => $value > 0, false],
+    [new Dictionary(new Pair(0, 'x'), new Pair(1, 'y'), new Pair(2, 'z')), fn ($value) => $value === 'y', true],
+    [new Dictionary(new Pair(0, 'x'), new Pair(1, 'y'), new Pair(2, 'z')), fn ($value) => $value === 'a', false],
+]);
+
+it('checks if every element matches the given selector', function (Dictionary $dictionary, callable $selector, bool $expectedResult) {
+    expect($dictionary->every($selector))->toBe($expectedResult);
+})->with([
+    [new Dictionary(new Pair('a', 1), new Pair('b', 2), new Pair('c', 3)), fn ($value) => $value > 0, true],
+    [new Dictionary(new Pair('a', 1), new Pair('b', 2), new Pair('c', 3)), fn ($value) => $value > 2, false],
+    [new Dictionary(new Pair('a', 2), new Pair('b', 4), new Pair('c', 6)), fn ($value) => $value % 2 === 0, true],
+    [new Dictionary(new Pair('a', 2), new Pair('b', 4), new Pair('c', 5)), fn ($value) => $value % 2 === 0, false],
+    [new Dictionary(), fn ($value) => $value > 0, true],
+    [new Dictionary(new Pair(0, 'x'), new Pair(1, 'y'), new Pair(2, 'z')), fn ($value) => is_string($value), true],
 ]);

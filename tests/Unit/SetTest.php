@@ -8,6 +8,7 @@ use Axonode\Collections\Object\Hashable;
 use Axonode\Collections\Pair;
 use Axonode\Collections\Set;
 use Axonode\Collections\SortDirection;
+use function Axonode\Collections\setOf;
 
 it('can handle supported types', function (Set $set, int $key, mixed $expectedValue, ?callable $cleanUp = null) {
     try {
@@ -91,6 +92,14 @@ it('can handle supported types', function (Set $set, int $key, mixed $expectedVa
 
 it('creates a set of the given values', function (array $initialValues, Set $expectedSet) {
     expect(new Set($initialValues))->toEqual($expectedSet);
+})->with([
+    [[], new Set()],
+    [[1, 2, 3], new Set([1, 2, 3])],
+    [['a', 'b', 'c', 'd', 'a', 'x', 'c', 'z'], new Set(['a', 'b', 'c', 'd', 'x', 'z'])],
+]);
+
+it('creates a set of the given values with the helper function', function (array $initialValues, Set $expectedSet) {
+    expect(setOf($initialValues))->toEqual($expectedSet);
 })->with([
     [[], new Set()],
     [[1, 2, 3], new Set([1, 2, 3])],
@@ -415,4 +424,26 @@ it('checks if the collection is not empty', function (Set $set, bool $expectedRe
 })->with([
     [new Set(), false],
     [new Set([1, 2, 3]), true],
+]);
+
+it('checks if any element matches the given selector', function (Set $set, callable $selector, bool $expectedResult) {
+    expect($set->any($selector))->toBe($expectedResult);
+})->with([
+    [new Set([1, 2, 3, 4, 5]), fn ($value) => $value > 3, true],
+    [new Set([1, 2, 3, 4, 5]), fn ($value) => $value > 10, false],
+    [new Set([1, 2, 3, 4, 5]), fn ($value) => $value === 3, true],
+    [new Set(), fn ($value) => $value > 0, false],
+    [new Set(['a', 'b', 'c']), fn ($value) => $value === 'b', true],
+    [new Set(['a', 'b', 'c']), fn ($value) => $value === 'z', false],
+]);
+
+it('checks if every element matches the given selector', function (Set $set, callable $selector, bool $expectedResult) {
+    expect($set->every($selector))->toBe($expectedResult);
+})->with([
+    [new Set([1, 2, 3, 4, 5]), fn ($value) => $value > 0, true],
+    [new Set([1, 2, 3, 4, 5]), fn ($value) => $value > 3, false],
+    [new Set([2, 4, 6, 8]), fn ($value) => $value % 2 === 0, true],
+    [new Set([2, 4, 5, 8]), fn ($value) => $value % 2 === 0, false],
+    [new Set(), fn ($value) => $value > 0, true],
+    [new Set(['a', 'b', 'c']), fn ($value) => is_string($value), true],
 ]);

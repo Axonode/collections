@@ -30,4 +30,26 @@ trait CollectionShared
 
         return $merged;
     }
+
+    public function any(callable $selector): bool
+    {
+        foreach ($this->values() as $value) {
+            if ($selector($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function every(callable $selector): bool
+    {
+        foreach ($this->values() as $value) {
+            if (!$selector($value)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
