@@ -43,10 +43,11 @@ if (!function_exists('dictionaryOf')) {
      */
     function dictionaryOf(array $items): Dictionary
     {
-        return new Dictionary(...array_map(
-            static fn ($key, $value) => new Pair($key, $value),
-            array_keys($items),
-            $items
-        ));
+        $pairs = [];
+        foreach ($items as $key => $value) {
+            $pairs[] = new Pair($key, $value);
+        }
+
+        return new Dictionary(...$pairs);
     }
 }

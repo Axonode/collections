@@ -8,6 +8,7 @@ parameters:
           paths:
               - src/Dictionary.php
               - src/Traits/ListShared.php
+              - src/helpers.php
 
         - identifier: method.childReturnType
           paths:
